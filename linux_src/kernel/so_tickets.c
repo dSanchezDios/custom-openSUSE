@@ -1,11 +1,11 @@
-#include "linux/so_tickets.h"
+#include <linux/so_tickets.h>
 
 int so_count_processes(void){
   int count = 0;
   struct task_struct *PCB;
   
   for_each_process(PCB){
-    char process_name = PCB->comm;
+    char process_name = PCB->comm[0];
 
     if(process_name == 'a' ||
        process_name == 'p' ||
@@ -25,7 +25,7 @@ int so_find_victim(int priority){
   printk("Looking for a victim\n");
 
   for_each_process(PCB){ 
-    char process_name = PCB->comm;
+    char process_name = PCB->comm [0];
 
     if(process_name == 'a' ||
        process_name == 'p' ||
@@ -48,7 +48,7 @@ void so_count_time(void){
 
    for_each_process(PCB){
 
-    char process_name = PCB->comm;
+    char process_name = PCB->comm[0];
 
     if(process_name == 'a' ||
        process_name == 'p' ||
@@ -67,7 +67,7 @@ void so_count_time(void){
 
 void so_new_process(struct task_struct *PCB){
   int priority = 0;
-  char name = PCB->comm;
+  char name = PCB->comm[0];
   
   switch(name){    
   case 'a':
@@ -105,7 +105,7 @@ void so_new_process(struct task_struct *PCB){
   
 }
 
-int so_insert_process(struct task_struct *PBC, int priority){
+int so_insert_process(struct task_struct *PCB, int priority){
   
   struct sched_param queue;
   int queue_alg;
@@ -135,6 +135,6 @@ int so_insert_process(struct task_struct *PBC, int priority){
     return 0;
   }
 
-  return sched_setcheduler(PCB, queue_type, &queue);
+  return sched_setscheduler(PCB, queue_alg, &queue);
 
 }
