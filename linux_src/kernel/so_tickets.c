@@ -2,7 +2,7 @@
 
 int so_count_processes(void){
   int count = 0;
-  struc task_struct *PCB;
+  struct task_struct *PCB;
   
   for_each_process(PCB){
     char process_name = PCB->comm;
@@ -20,7 +20,7 @@ int so_count_processes(void){
 }
 
 int so_find_victim(int priority){
-  struc task_struct *PCB;
+  struct task_struct *PCB;
 
   printk("Looking for a victim\n");
 
@@ -44,7 +44,7 @@ int so_find_victim(int priority){
 }
 
 void so_count_time(void){
-  struc task_struct *PCB;
+  struct task_struct *PCB;
 
    for_each_process(PCB){
 
@@ -87,7 +87,7 @@ void so_new_process(struct task_struct *PCB){
     priority = 5;
     break;
   default :
-    priotiry = 0;
+    priority = 0;
     break;
   }
   
