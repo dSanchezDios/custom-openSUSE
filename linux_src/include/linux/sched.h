@@ -1188,7 +1188,7 @@ enum perf_event_task_context {
 };
 
 struct task_struct {
-        int priority;
+  int priority;
 	volatile long state;	/* -1 unrunnable, 0 runnable, >0 stopped */
 	void *stack;
 	atomic_t usage;
