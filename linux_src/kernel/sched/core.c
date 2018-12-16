@@ -2629,14 +2629,14 @@ void scheduler_tick(void)
 	int cpu = smp_processor_id();
 	struct rq *rq = cpu_rq(cpu);
 	struct task_struct *curr = rq->curr;
+
+	so_counter ++;
     
-    so_counter ++;
-    
-    if(so_counter == 20){
-        so_count_time();
-        so_counter = 0;
-    }
-    
+	if(so_counter == 20){
+	  so_count_time();
+	  so_counter = 0;
+	}
+
 	sched_clock_tick();
 
 	raw_spin_lock(&rq->lock);
