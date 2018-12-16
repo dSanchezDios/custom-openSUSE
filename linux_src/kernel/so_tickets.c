@@ -3,7 +3,6 @@
 int so_count_processes(void){
   int count = 0;
   struct task_struct *PCB;
-  
   for_each_process(PCB){
     if(PCB->priority != 0){
       count ++;
@@ -59,22 +58,27 @@ void so_new_process(struct task_struct *PCB){
   }
 
   printk("Process request name: %s , pid: %d \n", PCB->comm, PCB->pid);
+  int i = 19;
+  if((so_count_processes() >= N) && (so_find_victim(priority) == 1)){
 
-  PCB->priority = priority;
-  printk("Process priority %d set to %s %d\n", priority, PCB->comm, PCB->priority );
-  
-  if((so_count_processes() > N) && (so_find_victim(priority) == 1)){
     printk("Rejecting process pid %d ...\n", PCB->pid);
-    kill_pid(find_vpid(PCB->pid), SIGKILL, 1);
+    i = kill_pid(find_vpid(PCB->pid), SIGKILL, 1);
+    printk("Sigkill says %d", i);
+    printk("Process not added to queue");
+    return;
+
+  }else if((so_insert_process(PCB, priority) == 0)){
+
+      printk("Process %d added to queue\n", PCB->pid);
+      return;
+
+  }else{
+
+    printk("Something get wrong");
     return;
   }
-  
-  if((so_insert_process(PCB, priority) == 0)){
-    printk("Process %d added to queue\n", PCB->pid);
-    return;
-  }
-  
-  printk("Process %d not added to queue\n", PCB->pid);
+
+  printk("ERROR");
 }
 
 int so_insert_process(struct task_struct *PCB, int priority){    
@@ -82,6 +86,7 @@ int so_insert_process(struct task_struct *PCB, int priority){
   int queue_alg;
   
   printk("Inserting process name: %s, pid: %d\n", PCB->comm, PCB->pid);
+  PCB ->priority = priority;
 
   switch(priority){
   case 1:
@@ -105,9 +110,9 @@ int so_insert_process(struct task_struct *PCB, int priority){
     queue_alg = SCHED_RR;
     break;
   default:
-    return 0;
+    printk("Something get wrong");
+    return -2;
   }
   
   return sched_setscheduler(PCB, queue_alg, &queue);
-  
 }
