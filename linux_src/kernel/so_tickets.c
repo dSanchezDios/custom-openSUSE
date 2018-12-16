@@ -5,13 +5,7 @@ int so_count_processes(void){
   struct task_struct *PCB;
   
   for_each_process(PCB){
-    char process_name = PCB->comm[0];
-
-    if(process_name == 'a' ||
-       process_name == 'p' ||
-       process_name == 'c' ||
-       process_name == 'b' ||
-       process_name == 'q' ){
+    if(PCB->priority != 0){
       count ++;
     }
   }
@@ -25,20 +19,13 @@ int so_find_victim(int priority){
   printk("Looking for a victim\n");
 
   for_each_process(PCB){ 
-    char process_name = PCB->comm [0];
-
-    if(process_name == 'a' ||
-       process_name == 'p' ||
-       process_name == 'c' ||
-       process_name == 'b' ||
-       process_name == 'q' ){
-
-      if(PCB->priority > priority){
+      int target_priority = PCB->priority;
+      if(target_priority != 0 && target_priority < priority){
 	printk("Victim found pid: %d, priority: %d", PCB->pid, PCB->priority);
 	kill_pid(find_vpid(PCB->pid), SIGKILL, 1);
 	return 0;
       }
-    }
+    
   }
   return 1;
 }
@@ -50,17 +37,9 @@ void so_count_time(void){
 
     char process_name = PCB->comm[0];
 
-    if(process_name == 'a' ||
-       process_name == 'p' ||
-       process_name == 'c' ||
-       process_name == 'b' ||
-       process_name == 'q' ||
-       process_name == 'l' ){
-
-       if(cputime_to_secs( PCB->utime + PCB->stime) >= MAX_TIME){
+    if((PCB->priority != 0) && (cputime_to_secs( PCB->utime + PCB->stime) >= MAX_TIME)){
 	printk("Exceeded maximum time for pid %d.",PCB->pid);
 	kill_pid(find_vpid(PCB->pid), SIGKILL, 1);
-       }
      }
    }
 }
