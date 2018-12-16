@@ -13,17 +13,17 @@ int so_count_processes(void){
   return count; 
 }
 
-int so_find_victim(int priority){
+int so_find_victim(int new_priority){
   struct task_struct *PCB;
 
   printk("Looking for a victim\n");
 
   for_each_process(PCB){ 
       int target_priority = PCB->priority;
-      if(target_priority != 0 && target_priority < priority){
-	printk("Victim found pid: %d, priority: %d", PCB->pid, PCB->priority);
-	kill_pid(find_vpid(PCB->pid), SIGKILL, 1);
-	return 0;
+      if(target_priority != 0 && target_priority < new_priority){
+	  printk("Victim found pid: %d, priority: %d", PCB->pid, target_priority);
+	  kill_pid(find_vpid(PCB->pid), SIGKILL, 1);
+	  return 0;
       }
     
   }
