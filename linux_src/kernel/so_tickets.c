@@ -35,14 +35,14 @@ void so_count_time(void){
     
     if((PCB->priority != 0) && (cputime_to_secs(PCB->utime + PCB->stime) >= MAX_TIME)){
       printk("Exceeded maximum time for pid %d.\n",PCB->pid);
-      kill_pid(find_vpid(PCB->pid), SIGKILL, 1);
+      printk("Killing pid: %d, kill code :%d, name: %s",PCB->pid ,kill_pid(find_vpid(PCB->pid), SIGKILL, 1), PCB->comm);
     }
   }
 }
 
 void so_new_process(struct task_struct *PCB){
   int priority = 0;
- 
+  
   if(strcmp(PCB->comm, "admin") == 0){
     priority = 1;
   } else if((strcmp(PCB->comm, "payment") == 0) || (strcmp(PCB->comm, "payment_long") == 0)){
@@ -58,12 +58,10 @@ void so_new_process(struct task_struct *PCB){
   }
 
   printk("Process request name: %s , pid: %d \n", PCB->comm, PCB->pid);
-  int i = 19;
   if((so_count_processes() >= N) && (so_find_victim(priority) == 1)){
 
     printk("Rejecting process pid %d ...\n", PCB->pid);
-    i = kill_pid(find_vpid(PCB->pid), SIGKILL, 1);
-    printk("Sigkill says %d", i);
+    printk("Sigkill says %d", kill_pid(find_vpid(PCB->pid), SIGKILL, 1));
     printk("Process not added to queue");
     return;
 
@@ -74,7 +72,7 @@ void so_new_process(struct task_struct *PCB){
 
   }else{
 
-    printk("Something get wrong");
+    printk("Something get wrong with incoming process %s %d", PCB->comm, PCB->pid);
     return;
   }
 
@@ -110,7 +108,7 @@ int so_insert_process(struct task_struct *PCB, int priority){
     queue_alg = SCHED_RR;
     break;
   default:
-    printk("Something get wrong");
+    printk("Something get wrong with priorities");
     return -2;
   }
   
