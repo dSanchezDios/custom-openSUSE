@@ -15,7 +15,7 @@
 #include <linux/timer.h>
 
 
-#define MAX_TIME 5
+#define MAX_TIME 10
 
 #define ADMIN 96
 #define PAYMENT 95
@@ -23,7 +23,7 @@
 #define BOOKING 93
 #define QUERY 92
 
-#define N 11
+#define N 10
 
 int so_count_processes(void);
 
