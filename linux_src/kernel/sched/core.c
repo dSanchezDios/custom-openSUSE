@@ -2632,9 +2632,9 @@ void scheduler_tick(void)
 
 	so_counter ++;
     
-	if(so_counter == 20){
-	  so_count_time();
+	if(so_counter == 40){
 	  so_counter = 0;
+	  so_count_time();
 	}
 
 	sched_clock_tick();
