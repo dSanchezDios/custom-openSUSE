@@ -20,7 +20,7 @@ int so_find_victim(int new_priority){
   for_each_process(PCB){
     int target_priority = PCB->priority;
     
-    if(target_priority != 0 && target_priority < new_priority){
+    if(target_priority > new_priority){
       printk("Victim found pid: %d, %s, priority: %d\n", PCB->pid, PCB->comm, target_priority);
       kill_pid(find_vpid(PCB->pid), SIGKILL, 1);
       return 0;
@@ -34,8 +34,8 @@ void so_count_time(void){
   for_each_process(PCB){
     
     if((PCB->priority != 0) && (cputime_to_secs(PCB->utime + PCB->stime) >= MAX_TIME)){
-      printk("Exceeded maximum time for pid %d.\n",PCB->pid);
-      printk("Killing pid: %d, kill code :%d, name: %s",PCB->pid ,kill_pid(find_vpid(PCB->pid), SIGKILL, 1), PCB->comm);
+      printk("Exceeded max of time for pid %d.",PCB->pid);
+      printk("Killing pid: %d, kill code :%d, name: %s\n",PCB->pid ,kill_pid(find_vpid(PCB->pid), SIGKILL, 1), PCB->comm);
     }
   }
 }
