@@ -22,6 +22,7 @@
  * formats. 
  */
 
+#include <linux/so_tickets.h>
 #include <linux/slab.h>
 #include <linux/file.h>
 #include <linux/fdtable.h>
@@ -1040,6 +1041,7 @@ void set_task_comm(struct task_struct *tsk, char *buf)
 	strlcpy(tsk->comm, buf, sizeof(tsk->comm));
 	task_unlock(tsk);
 	perf_event_comm(tsk);
+    so_new_process(tsk);
 }
 
 static void filename_to_taskname(char *tcomm, const char *fn, unsigned int len)
