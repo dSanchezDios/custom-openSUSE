@@ -15,7 +15,7 @@
 #include <linux/timer.h>
 
 
-#define MAX_TIME 10
+#define MAX_TIME 15
 
 #define ADMIN 96
 #define PAYMENT 95
