@@ -1,0 +1,6 @@
+After modify functions:
+	> sudo make bzImage
+	> sudo make modules
+	> sudo make modules_install
+	> sudo make install
+Then, restart your system :)
