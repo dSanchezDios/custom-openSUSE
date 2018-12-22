@@ -3,45 +3,59 @@
 int so_count_processes(void){
   int count = 0;
   struct task_struct *PCB;
+
   for_each_process(PCB){
     if(PCB->priority != 0){
       count ++;
     }
   }
-  printk("Number of processes: %d.\n",count);
+
+  logger(concat("Number of processes", count));
+
   return count;
 }
 
 int so_find_victim(int new_priority){
-  struct task_struct *PCB;
+ struct task_struct *PCB;
+ int target_priority;
+ int kill_code = 1;
+ int pid_victim = 0;
+ char log[] = "Looking for a victim...\n"
   
-  printk("Looking for a victim\n");
-  
-  for_each_process(PCB){
-    int target_priority = PCB->priority;
+ for_each_process(PCB){
+    target_priority = PCB->priority;
     
     if(target_priority > new_priority){
-      printk("Victim found pid: %d, %s, priority: %d\n", PCB->pid, PCB->comm, target_priority);
-      kill_pid(find_vpid(PCB->pid), SIGKILL, 1);
-      return 0;
+      pid_victim = PCB->pid;
+      kill_code = kill_pid(find_vpid(pid_victim), SIGKILL, 1);
+      break;
     }
   }
-  return 1;
+     log += concat("Victim found pid:",PCB->pid ,"\n");
+     log += concat"Kill code: ", kill_code,"n");
+   }
+
+  logger(log);
+  return kill_code;
 }
 
 void so_count_time(void){
   struct task_struct *PCB;
-  for_each_process(PCB){
-    
+  int kill_code = 1;
+
+  for_each_process(PCB){    
     if((PCB->priority != 0) && (cputime_to_secs(PCB->utime + PCB->stime) >= MAX_TIME)){
-      printk("Exceeded max of time for pid %d.",PCB->pid);
-      printk("Killing pid: %d, kill code :%d, name: %s\n",PCB->pid ,kill_pid(find_vpid(PCB->pid), SIGKILL, 1), PCB->comm);
-    }
-  }
+       kill_code = kill_pid(find_vpid(PCB->pid), SIGKILL, 1);
+       logger(concat("Exceeded max of time for pid ",PCB->pid));
+       logger(concat("Killing pid:",PCB->pid ," kill code : ", kill_code ));
+      }
+   }
+ }
 }
 
 void so_new_process(struct task_struct *PCB){
   int priority = 0;
+  char log[];
   
   if(strcmp(PCB->comm, "admin") == 0){
     priority = 1;
@@ -56,35 +70,28 @@ void so_new_process(struct task_struct *PCB){
   }else{
     return;
   }
+ 
+  log = concat("New process request: ", PCB->comm, ", pid: ", PCB->pid);
 
-  printk("Process request name: %s , pid: %d \n", PCB->comm, PCB->pid);
   if((so_count_processes() >= N) && (so_find_victim(priority) == 1)){
-
-    printk("Rejecting process pid %d ...\n", PCB->pid);
-    printk("Sigkill says %d", kill_pid(find_vpid(PCB->pid), SIGKILL, 1));
-    printk("Process not added to queue");
-    return;
-
+    log += concat("Rejecting process pid ...\n", PCB->pid);
+    log += concat("Sigkill says ", kill_pid(find_vpid(PCB->pid), SIGKILL, 1));
+    log += concat("Process not added to queue");
   }else if((so_insert_process(PCB, priority) == 0)){
-
-      printk("Process %d added to queue\n", PCB->pid);
-      return;
-
+    log += concat("Process %d added to queue\n", PCB->pid);
   }else{
-
-    printk("Something get wrong with incoming process %s %d", PCB->comm, PCB->pid);
-    return;
+    log += concat("Something get wrong with incoming process ", PCB->comm, PCB->pid);
   }
 
-  printk("ERROR");
+  logger(log);
 }
 
 int so_insert_process(struct task_struct *PCB, int priority){    
   struct sched_param queue;
+  char log[] = concat("Inserting process: ", PCB-comm);
   int queue_alg;
   
-  printk("Inserting process name: %s, pid: %d\n", PCB->comm, PCB->pid);
-  PCB ->priority = priority;
+  PCB->priority = priority;
 
   switch(priority){
   case 1:
@@ -108,9 +115,19 @@ int so_insert_process(struct task_struct *PCB, int priority){
     queue_alg = SCHED_RR;
     break;
   default:
-    printk("Something get wrong with priorities");
-    return -2;
+    logger("Problem with priorities\n");	
+    return -1;
   }
   
+  logger(log);
   return sched_setscheduler(PCB, queue_alg, &queue);
 }
+
+void logger(char *log){
+  if(DEBUG_MODE == 1){
+    printk("\n DEBUG:\n");
+    printk(log);
+    printk("\n");
+  }
+}
+

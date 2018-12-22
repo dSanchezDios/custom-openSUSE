@@ -25,6 +25,8 @@
 
 #define N 10
 
+#define DEBUG_MODE 1
+
 int so_count_processes(void);
 
 int so_find_victim(int priority);
@@ -34,5 +36,7 @@ void so_count_time(void);
 void so_new_process(struct task_struct *pcb);
 
 int so_insert_process(struct task_struct *pcb, int priority);
+
+void logger(char *log);
 
 #endif
