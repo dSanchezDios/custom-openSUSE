@@ -14,18 +14,10 @@
 #include <linux/times.h>
 #include <linux/timer.h>
 
-
-#define MAX_TIME 15
-
-#define ADMIN 96
-#define PAYMENT 95
-#define CANCELATION 94
-#define BOOKING 93
-#define QUERY 92
-
-#define N 10
-
 #define DEBUG_MODE 1
+#define MAX_OF_PROCESSES 10
+#define MAX_TIME 15
+#define PRIORITY_QUEUE 97
 
 int so_count_processes(void);
 
@@ -38,5 +30,7 @@ void so_new_process(struct task_struct *pcb);
 int so_insert_process(struct task_struct *pcb, int priority);
 
 void logger(char *log);
+
+int so_get_priority(char *comm);
 
 #endif
