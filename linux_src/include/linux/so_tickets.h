@@ -18,6 +18,12 @@
 #define MAX_OF_PROCESSES 10
 #define MAX_TIME 15
 #define PRIORITY_QUEUE 97
+#define ADMIN "admin"
+#define PAYMENT "payment"
+#define PAYMENT "payment_long"
+#define CANCELATION "cancelation"
+#define BOOKING "booking"
+#define QUERY "query"
 
 int so_count_processes(void);
 
