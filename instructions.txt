@@ -10,7 +10,7 @@
 	move .config to ~/linux_src
 	> make oldconfig
 	> make menucondig
-		> General Setup-->Local versión – append to kernel release
+		> General Setup-->Local versión – append to kernel release
 		> Exit & save
 	> cat /etc/default/grub_installdevice
 		/dev/sda2 -> here your SO location
