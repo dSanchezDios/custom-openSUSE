@@ -1,6 +1,4 @@
-############################################################################
-######## WARNING, please follow the instructions and try it in a VM ########
-############################################################################
+## WARNING, please follow the instructions and try it in a VM
 
 1. Instructions before modify kernel:
 
