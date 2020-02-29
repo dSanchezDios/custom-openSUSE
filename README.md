@@ -1,4 +1,4 @@
-## WARNING, please follow the instructions and USE a VM
+## ⚠️ Please follow the instructions and USE a VM
 
 1. Instructions before modify kernel:
 
